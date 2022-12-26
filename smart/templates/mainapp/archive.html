@@ -1,0 +1,43 @@
+{% extends "mainapp/base.html" %}
+{% load static %}
+
+{% block css_sheet %}
+<link rel="stylesheet" href="{% static 'css/archive.css' %}">{% endblock %}
+
+{% block title_sheet %}Архив{% endblock %}
+
+{% block content %}
+<main class="archive-bank-main">
+    <div class="wrapper">
+        <div class="archive-bank">
+            {% for date in dates %}
+            <div class="block-journal-year">
+                <h2 class="date-journals">{{ date }} год</h2>
+                <div class="block-journals">
+                    {% for magazine in magazines %}
+                    {% if magazine.date.year == date %}
+                    <div class="card-journal">
+                        <div class="title">
+                            <div class="journal-info">
+                                <h3 class="number-journal">№{{ magazine.count_magazine }}</h3>
+                                <div class="date-block">
+                                    <p class="info-journal">{{ magazine.date }}</p>
+                                    <p class="info-journal">•</p>
+                                    <p class="info-journal">{{ magazine.count_article }} статей</p>
+                                </div>
+                            </div>
+                            <a href="{{ magazine.file.url }}" download class="download-btn">
+                                <img src={% static "img/download.svg" %} alt="download">
+                            </a>
+                        </div>
+                        <img class="journal-background" src="{{ magazine.image.url }}" alt="kek">
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</main>
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends "mainapp/base.html" %}
+{% load static %}
+
+{% block css_sheet %}<link rel="stylesheet" href="{% static 'css/archve-magazine.css' %}">{% endblock %}
+
+{% block title_sheet %}Архив{% endblock %}
+
+{% block content %}
+<main class="archive-bank-main">
+    <div class="wrapper">
+        <div class="archive-bank">
+            {% for magazine in magazines %}
+            <!--                <h2 class="date-journal">2022 год</h2>-->
+            <div class="journal-issue-one">
+                <aside class="main-picture-journal">
+                    <img src="{{ magazine.image.url }}" alt="cover" width="250" height="300">
+                </aside>
+                <div class="main-block-journal">
+                    <div class="header-journal">
+                        <div class="info">
+                            <h2 class="number-journal">{{ magazine.title }}</h2>
+                            <div class="journal-info">
+                                <p class="info-journal">{{ magazine.date }}</p>
+                                <p class="info-journal">•</p>
+                                <p class="info-journal">8 статей</p>
+                            </div>
+                        </div>
+                        <img src="/img/download.svg" alt="download">
+                    </div>
+                    <div class="articles-of-journal">
+                        {% for article in magazine.articles.all %}
+                        <div class="article-card">
+                            <a href="article-sample.html">
+                                <div class="wrapper-for-blur">
+                                    <div class="dark-photo">
+                                        <img src="{{ article.image.url }}" width="268" height="200">
+                                    </div>
+                                    <ul class="artcile-card-tags">
+                                        {% for category in article.categories.all %}
+                                        {% if forloop.counter <= 3 %}
+                                        <li class="news-tag-item ecology-tag">
+                                            <p>{{ category.title }}</p>
+                                        </li>
+                                        {% endif %}
+                                        {% endfor %}
+                                    </ul>
+                                    <p class="article-card-header">{{ article.title }}
+                                    </p>
+                                </div>
+                            </a>
+                        </div>
+
+
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</main>
+{% endblock %}

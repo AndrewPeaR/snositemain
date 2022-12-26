@@ -1,0 +1,67 @@
+.date-journals {
+    font-family: 'IBM Plex Sans', Roboto;
+    font-size: 24px;
+    font-weight: 700;
+    color: #101010;
+    margin: 0;
+    margin-bottom: 30px;
+}
+.block-journal-year{
+    margin-bottom: 45px;
+}
+.date-journals:after {
+    content: "";
+    margin-top: 9px;
+    display: block;
+    width: 100%;
+    height: 6px;
+    background-color: #F7F7F7;
+}
+.card-journal {
+    max-width: 268px;
+    margin-bottom: 60px;
+}
+.journal-background{
+    width: 100%;
+}
+.title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.number-journal{
+    margin: 0;
+    margin-bottom: 14px;
+}
+.date-block {
+    display: flex;
+}
+.info-journal {
+    margin: 0;
+    font-weight: 300;
+    font-size: 14px;
+    color: #3E3E3E;
+    margin-right: 15px;
+    margin-bottom: 20px;
+}
+.block-journals{
+    display: flex;
+    justify-content: flex-start;
+}
+.card-journal{
+    margin: 0;
+    margin-right: 30px;
+    height: 466px;
+}
+.card-journal:nth-child(4n){
+    margin: 0;
+}
+.download-btn{
+    height: 40px;
+    border: none;
+    background: none;
+}
+.download-btn:active{
+    background-color: #F7F7F7;
+    border-radius: 5px;
+}

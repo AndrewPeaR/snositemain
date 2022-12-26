@@ -1,0 +1,126 @@
+{% extends "mainapp/base.html" %}
+{% load static %}
+
+{% block css_sheet %}<link rel="stylesheet" href="{% static 'css/style.css' %}">{% endblock %}
+
+{% block title_sheet %}Главная страница{% endblock %}
+
+
+{% block content %}
+<main class="mainblock">
+    <div class="wrapper">
+        <div class="main-block">
+            <div class="main-block-header">
+                <span>Студенческий журнал</span>
+                <h1>LEAN GREEN SMART</h1>
+            </div>
+            <div class="many-facts">
+                <span>Факт 1</span>
+                <span>Факт 2</span>
+                <span>Факт 3</span>
+            </div>
+        </div>
+    </div>
+</main>
+
+<section class="actual-section">
+    <div class="wrapper">
+        <h2 class="h2-actual">Актуальное сегодня</h2>
+        <div class="horizon-line">
+            <div class="horizon-line-blue-actual"></div>
+        </div>
+        <div class="actual-block">
+            <div class="btn-left">
+                <button><img src="{% static 'img/left.svg'%}" alt="left"></button>
+            </div>
+            <div class="actual-block-main">
+                <div class="actual-block-info">
+                    <ul>
+                        <li class="news-tag-item new-tag">
+                            <p>NEW!</p>
+                        </li>
+                        <li class="news-tag-item ecology-tag">
+                            <p>Экология</p>
+                        </li>
+                    </ul>
+                    <p class="header-news">Эксперты утверждают, что сложившаяся структура организации сделала своё
+                        дело</p>
+                </div>
+            </div>
+            <div class="btn-right">
+                <button><img src="{% static 'img/right.svg' %}" alt="left"></button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="archive">
+    <div class="wrapper">
+        <h2 class="h2-title">Об архиве</h2>
+        <div class="horizon-line">
+            <div class="horizon-line-blue-archive"></div>
+        </div>
+        <div class="archive-block-wrapper">
+            <div class="archive-block">
+                <img src="{% static 'img/mockup1.png' %}" alt="mockup">
+                <div class="info-archive-block">
+                    <p class="info-archive">ЯНВ 2022</p>
+                    <p class="info-archive">•</p>
+                    <p class="info-archive">9 статей</p>
+                </div>
+                <h3 class="archive-title">Журнал о сплочённости команды профессионалов</h3>
+                <p class="about-archive">Мы вынуждены отталкиваться от того, что консультация с широким активом
+                    однозначно фиксирует необходимость экспериментов, поражающих по своей масштабности...</p>
+            </div>
+            <div class="archive-block">
+                <img src="{% static 'img/mockup2.png' %}" alt="mockup">
+                <div class="info-archive-block">
+                    <p class="info-archive">ДЕК 2021</p>
+                    <p class="info-archive">•</p>
+                    <p class="info-archive">9 статей</p>
+                </div>
+                <h3 class="archive-title">Прототип нового сервиса - это как далёкий барабанный бой</h3>
+                <p class="about-archive">Каждый из нас понимает очевидную вещь: реализация намеченных плановых
+                    заданий играет важную роль в формировании инновационных методов управления процессами</p>
+            </div>
+            <div class="archive-block">
+                <img src="{% static 'img/mockup3.png' %}" alt="mockup">
+                <div class="info-archive-block">
+                    <p class="info-archive">НОЯБ 2021</p>
+                    <p class="info-archive">•</p>
+                    <p class="info-archive">9 статей</p>
+                </div>
+                <h3 class="archive-title">Логотип крупнейшей <br> компании по производству мыльных пузырей</h3>
+                <p class="about-archive">И нет сомнений, что интерактивные прототипы рассмотрены исключительно в
+                    разрезе маркетинговых и финансовых предпосылок</p>
+            </div>
+        </div>
+        <div class="btn-wrapper">
+            <div class="btn-block">
+                <a class="btn-go-archive" href="#">Перейти в архив</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="in-working">
+    <div class="wrapper">
+        <div class="about-author">
+            <h2>Об авторах журнала</h2>
+            <p>Блок в разработке</p>
+        </div>
+    </div>
+</section>
+
+<section class="subscribe-email">
+    <div class="wrapper-subs">
+        <img class="subs-svg" src="{% static 'img/subs.svg' %}" alt="subscribe">
+        <div class="subscribe-info">
+            <h2 class="subscribe-title">Подпишись на рассылку</h2>
+            <p>Оставь свою почту, чтобы первым узнавать о новых выпусках журнала</p>
+            <input class="email-input" type="email" placeholder="Введите электронную почту">
+            <button type="button">Подписаться</button>
+        </div>
+    </div>
+</section>
+{% endblock %}

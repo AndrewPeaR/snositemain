@@ -1,0 +1,56 @@
+{% extends "mainapp/base.html" %}
+{% load static %}
+
+{% block css_sheet %}<link rel="stylesheet" href="{% static 'css/style.css' %}">
+<link rel="stylesheet" href="{% static 'css/modal.css' %}">
+<script src="{% static 'js/modal.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<script src="{% static 'js/activemodal.js' %}"></script>
+    <main>
+        <div class="wrapper">
+            <div class="mainblock">
+                <p>Студенческий журнал</p>
+                <h1>Бизнес трансформация:<br>управление улучшениями</h1>
+            </div>
+        </div>
+    </main>
+
+    <section>
+        <div class="wrapper">
+            <div class="archiveblock">
+                <div class="h2-div">
+                    <h2>Последнее из архива</h2>
+                </div>
+            </div>
+        </div>
+        <div class="articlesblock">
+            <div class="wrapper">
+                <div class="articlesblock-content">
+                    {% for magazine in magazines %}
+                    <a href="{{ magazine.file.url }}" download><img class="main-cover" src="{{ magazine.image.url }}" alt="Обложка"></a>
+                    {% endfor %}
+                </div>
+                <div class="btn-wrapper">
+                    <a href="{% url 'archive' %}">
+                        <div class="btn-deactive">Перейти в архив</div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="emailsentblock">
+        <div class="wrapper">
+            <form class="emailsent-form" method="post" onsubmit="alert('Все успешно!');">
+                {% csrf_token %}
+                <h2>Подпишись на рассылку</h2>
+                <p>Оставь свою почту, чтобы первым узнавать о новых выпусках журнала</p>
+                <!-- <input type="email" id="emailinput" placeholder="Введите электронную почту"> -->
+                {{ form }}
+                <input type="submit" value="Подписаться" id="emailsubmit">
+            </form>
+        </div>
+    </section>
+{% endblock %}

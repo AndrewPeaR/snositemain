@@ -1,0 +1,85 @@
+{% extends "mainapp/base.html" %}
+{% load static %}
+
+{% block css_sheet %}
+<link rel="stylesheet" href="{% static 'css/article-sample.css' %}">{% endblock %}
+
+{% block title_sheet %}Статья{% endblock %}
+
+
+{% block content %}
+
+<main class="main-heading">
+    <div class="wrapper">
+        <article>
+            <div class="info-article">
+                <div class="path-article">
+                    <p class="archive-article path-element">Архив журнала</p>
+                    <p class="date-article path-element">{{ magazine.date }}</p>
+                    <p class="magazine-number path-element">{{ magazine.title }}</p>
+                    <p class="path-element name-article">{{ article.title }}</p>
+                </div>
+                <div class="background-article">
+                    <img src="{{ article.image.url }} " width="1150" height="550" alt="background">
+                </div>
+                <div class="header-article">
+                    <div class="tags-icons-wrapper">
+                        <div class="article-tags">
+                            <ul class="tags-list">
+                                {% for category in article.categories.all %}
+                                <li class="ecology-tag">
+                                    <p>{{ category.title }}</p>
+                                </li>
+                                {% endfor %}
+
+                            </ul>
+                        </div>
+                        <div class="icons-public">
+                            <img src="{% static 'img/vkblack.svg' %}" alt="vk">
+                            <img src="{% static 'img/link.svg' %}" alt="link">
+                        </div>
+                    </div>
+                    <div class="article-header">
+                        <h2>{{ article.title }}</h2>
+                    </div>
+                    <div class="article-info">
+                        <p class="info-archive">{{article.date }}</p>
+                        <p class="info-archive">•</p>
+                        <p class="info-archive">{{article.author}}</p>
+                        <p class="info-archive">•</p>
+                        <p class="info-archive">А КАК МЫ ПОЙМЕМ СКОЛЬКО ВРЕМЕНИ ЗАЙМЕТ ЧТЕНИЕ? АЛГОРИТМЫ ЕЩЕ ЧТО ЛИ ПИСАТЬ?</p>
+                    </div>
+                </div>
+            </div>
+            <div class="article-wrapper">
+                <div class="article-text">
+                    <div class="main-text">
+                        {{ article.content|safe|linebreaks }}
+                    </div>
+                </div>
+                <aside class="more-articles-wrapper">
+                    <div class="more-articles-filter">
+                        <p>Еще из рубрики</p>
+                        <div class="headings">
+                            {% for art in articles %}
+                            <a href="/article/{{art.id}}">
+                                <div class="heading-one">
+                                    <p class="heading-header">
+                                        {{ art.title }}
+                                    </p>
+                                    <div class="heading-info">
+                                        <p class="heading-item">{{ category.title }}</p>
+                                        <p class="heading-item">•</p>
+                                        <p class="heading-item">{{ art.date }}</p>
+                                    </div>
+                                </div>
+                            </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </article>
+    </div>
+</main>
+{% endblock %}

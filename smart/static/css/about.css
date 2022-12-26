@@ -1,0 +1,39 @@
+.about-title::after{
+    content: "";
+    margin-top: 20px;
+    display: block;
+    width: 100%;
+    height: 6px;
+    background-color: #F7F7F7;
+}
+.about-title>h2::after{
+    position: absolute;
+    content: "";
+    margin-top: 20px;
+    display: block;
+    width: 140px;
+    height: 6px;
+    background-color: #1E95FC;
+}
+.about-title>h2{
+    margin: 0;
+    color: #101010;
+}
+.about-info-item{
+    color: #101010;
+    font-size: 24px;
+    text-indent: 0.5em;
+}
+
+.about-table{
+    color: #101010;
+}
+.about-table tr{
+    border: 1px solid #dddddd;
+}
+.about-table td{
+    border: 1px solid #dddddd;
+}
+.about-table th{
+    border: 1px solid #dddddd;
+}

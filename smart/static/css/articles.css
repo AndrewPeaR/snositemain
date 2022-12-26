@@ -1,0 +1,176 @@
+.main-wrapper{
+    display: flex;
+}
+
+.ecology-tag {
+    background-color: rgba(0, 255, 194);
+    border-radius: 15px;
+    width: 75px;
+    height: 20px;
+    text-align: center;
+    font-size: 10px;
+    font-weight: 700;
+    color: #FCFCFC;
+}
+.ecology-tag p{
+    padding-top: 4px;
+    margin: 0;
+}
+.Lean-tag{
+    background-color: #09E1D3;
+    border-radius: 15px;
+    width: 75px;
+    height: 20px;
+    text-align: center;
+    font-size: 10px;
+    font-weight: 700;
+    color: #FCFCFC;
+}
+.Lean-tag p{
+    padding-top: 4px;
+    margin: 0;
+}
+.ITLean-tag{
+    background-color: rgba(19, 190, 230, 1);
+    border-radius: 15px;
+    width: 75px;
+    height: 20px;
+    text-align: center;
+    font-size: 10px;
+    font-weight: 700;
+    color: #FCFCFC;
+}
+.ITLean-tag p{
+    padding-top: 4px;
+    margin: 0;
+}
+.article-tags{
+    margin-left: 15px;
+}
+.article-tags ul{
+    display: flex;
+    padding: 0;
+}
+.article-container{
+    height: 396px;
+}
+.article-title{
+    max-width: 236px;
+    margin-left: 15px;
+}
+.article-title h2{
+    font-family: 'IBM Plex Serif';
+    color: #101010;
+    font-weight: 700;
+    font-size: 18px;
+}
+.article-info{
+    display: flex;
+    font-weight: 300;
+    color: rgba(16, 16, 16, 0.5);
+    margin-top: 30px;
+    margin-left: 15px;
+    padding-bottom: 30px;
+}
+.article-main-blog{
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+}
+.articles-menu{
+    padding: 0;
+    margin-right: 29px;
+    margin-bottom: 60px;
+    background-color: #FDFDFD;
+    max-height: 390px;
+}
+
+
+.article-filter{
+    width: 217px;
+    /* max-height: 379px; */
+    padding-top: 30px;
+    padding-left: 30px;
+    color: #101010;
+    background-color: #FDFDFD;
+    padding-bottom: 26px;
+    padding-right: 22px;
+}
+.article-filter > p{
+    font-size: 14px;
+    font-family: 'IBM Plex Sans', Roboto;
+    font-weight: 300;
+}
+.article-filter-tags > p{
+    margin: 0;
+    margin-top: 45px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    font-family: 'IBM Plex Sans', Roboto;
+    font-weight: 300;
+}
+.article-filter-tags > button{
+    outline: none;
+    border: none;
+    border-radius: 15px;
+    padding: 7px 18px;
+    font-weight: 700;
+    font-size: 12px;
+    color: #FCFCFC;
+    margin-bottom: 12px;
+}
+.article-filter-tags > button > img{
+    margin-right: 8px;
+}
+.ecology-filter{
+    background: #00FFC2;
+}
+.lean-filter{
+    background: #09E1D3;
+}
+.IT-lean-filter{
+    background: #13BEE6;
+}
+.article-filter-tags > button:hover{
+    background: #73e0f8;
+}
+.article-filter-tags > button:active{
+    background: #76ffdf;
+}
+
+/* Селект в фильтре */
+.select-wrapper{
+    position: relative;
+}
+.select-wrapper:after{
+    content: "";
+    display: block;
+	border-style: solid;
+	border-width: 7px 5.5px 0 5.5px;
+	border-color: #101010 transparent transparent transparent;
+    pointer-events: none;
+
+    position: absolute;
+    top: 50%;
+    right: 28px;
+    z-index: 1;
+    margin-top: -2px;
+}
+.select-wrapper select{
+    /* display: block; */
+    width: 100%;
+    max-width: 207px;
+    height: 50px;
+    padding-left: 20px;
+    padding-right: 40px;
+    background: #F9F9F9;
+    border: none;
+    font-size: 14px;
+    color: #101010;
+    font-weight: 300;
+    -webkit-appearance: none;
+    appearance: none;
+}
+.select-wrapper select:focus{
+    outline: none;
+}

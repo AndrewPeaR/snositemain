@@ -1,0 +1,436 @@
+from SystemFunction import Functions, tktable, ScreenManipulation
+from SystemFunction.SimpleTwo import checker
+from SystemFunction.SplashScreen import Splash
+from SystemFunction.TreeManipulation import delete_tree, populate_roots, \
+    update_tree
+from Tkconstants import N, W, S, E, SUNKEN, LEFT
+from Tkinter import Tk, Menu, Label, Scrollbar, Text, Button
+from tkFileDialog import askdirectory
+import Tkinter
+import os
+import shutil
+import tkMessageBox
+import ttk
+
+class Application(Tk):
+    
+    def createFile(self):
+        Functions.createNewFile(self)
+        
+    def validateFile(self):
+        Functions.validateF(self)
+        
+    def toSave(self):
+        Functions.saveFile(self)
+        
+    def toBrowser(self):
+        Functions.openBrowser(self)
+        
+    def seedFile(self):
+        Functions.checkIfDirectory(self,None)
+        
+    def askToOpenDirectory(self):
+        dirname = askdirectory(parent=self,initialdir=self.path,title='Please select a directory')
+        chosenDirectory = os.path.basename(dirname)
+        newDirectory = self.path+"/"+chosenDirectory
+        if os.path.exists(newDirectory):  
+            pass
+        else:   
+            try:
+                shutil.move(dirname,self.path)
+                delete_tree(self.tree, self.path)                
+                populate_roots(self.tree, self.path)
+            except shutil.Error:
+                pass
+            
+    def readAndCreateRecord(self,event):
+        item = self.tree.selection()[0]
+        self.FileName = str(self.tree.item(item,"text"))
+        self.FileLocation = str(self.tree.item(item,"value"))[2:-3]
+        Functions.checkIfDirectory(self,True)
+        return True
+    
+    def results(self,event):
+        Functions.showResultsTb(self)
+        
+    def clickTestFile(self):
+        Functions.checkIfDirectory(self,False)
+        
+    def clickSuggestion(self):
+        Functions.clearSuggestion(self)
+        self.exacMatchLabel.configure(text="Exact Match: None")
+        try:
+            error1="an attribute value literal can occur in an attribute specification list only after a VI delimiter"
+            error2="syntax of attribute value does not conform to declared value"
+            desc=self.var["%i,%i" % (self.ErrorsTable.index('active', 'row'),2)]
+            if str(desc).lower().strip() == error1.lower().strip():
+                Functions.forHighligth(self)
+                tkMessageBox.showerror('Syntax Error', 'No suggestion available,\nAttribute lacking \'=\' sign.')
+            elif str(desc).lower().strip() == error2.lower().strip():
+                Functions.forHighligth(self)
+                tkMessageBox.showerror('Syntax Error', 'Attribute with invalid value found!')
+            elif not desc.find("there is no attribute") == -1:
+                print 'fine'
+                holder=str(desc).split(" ")
+                Functions.forHighligth(self)
+                checker(self, attrib=holder[len(holder)-1][1:-1], checkAttrib=True)
+            elif not desc.find("is not a member of a group specified for any attribute") == -1:
+                Functions.forHighligth(self)
+                tkMessageBox.showerror( "Error", "Attribute is not valid.\nProbable cause is a tag with missing '>'")
+            elif not desc.find("document type does not allow element") == -1:
+                Functions.forHighligth(self)
+                tkMessageBox.showerror( "Error", "Relocate tag!\nTag should be inside a container. (e.g. <p>, <div>)\nScan content for errors.")
+            elif not desc.find("which is not open") == -1:
+                Functions.forHighligth(self)
+                holder=str(desc).split(" ")
+                print "<"+holder[4][1:-1]+">"
+                checker(self, endTag="<"+holder[4][1:-1]+">", unopenTag=True)
+            elif not desc.find("its declaration does not permit this") == -1:
+                print 's'
+                Functions.forHighligth(self)
+                holder=str(desc).split(" ")
+                print "<"+holder[3][1:-1]+">"
+                checker(self, unended="<"+holder[3][1:-1]+">", notPermit=True)
+            elif not desc.find("unterminated comment") == -1:
+                Functions.forHighligth(self)
+                tkMessageBox.showerror( "Error", "Incorrectly terminated comment in the content.")
+            elif not desc.find("an entity end in a literal must terminate an entity referenced in the same literal") == -1:
+                Functions.forHighligth(self)
+                tkMessageBox.showerror( "Error", "Unclosed value for attribute.\nLacking double quotation.")
+            elif not desc.find("element") == -1 and not desc.find("undefined") == -1:
+                Functions.forHighligth(self)
+                holder=str(desc).split(" ")
+                checker(self, element="<"+holder[1][1:-1]+">")
+            elif not desc.find("not allowed in attribute specification list") == -1:
+                print 'enter here'
+                Functions.forHighligth(self)
+                tkMessageBox.showerror( "Error", "Tag contains unnecessary characters.\nRemove unnecessary character.\ne.g. ], [, :")
+                checker(self)
+            else:
+                Functions.forHighligth(self)
+                checker(self)
+        except Exception:
+            pass
+  
+
+    def __init__(self, master=None):
+        self.new = False
+        
+        Tk.__init__(self, master)   
+        ScreenManipulation.checkPlatform(self)
+        screensize = self.screensize
+        
+        self.seeding = False
+        '''Setting the Window Size'''   
+        self.minsize(screensize[0], screensize[1])
+        self.rowconfigure(0,weight=1)
+        self.columnconfigure(0,weight=1)
+        '''Setting the Window Size'''
+
+        '''Menu Bar'''
+        menubar = Menu(self)
+        self.filemenu = Menu(menubar,tearoff=0) 
+        self.suggestionmenu = Menu(menubar,tearoff=0)             
+        self.helpmenu = Menu(menubar, tearoff=0)  
+        tabbedPane = ttk.Notebook(self)        
+        t1 = ttk.Frame(tabbedPane);
+        self.t2 = ttk.Frame(tabbedPane);
+        self.tree = ttk.Treeview(t1,columns=("fullpath"),
+        displaycolumns=(0),yscrollcommand=lambda f, l: ScreenManipulation.autoscroll(vsb, f, l))
+        self.config(menu=menubar)
+        
+        '''FILE MENU'''
+        self.filemenu.add_command(label="Create", command =self.createFile)
+        self.filemenu.add_command(label="Load Dataset", command=self.askToOpenDirectory)
+        self.filemenu.add_command(label="Seed", command = self.seedFile)
+        self.filemenu.add_command(label="Test", command = self.clickTestFile)
+        self.filemenu.add_command(label="Exit", command=lambda: self.destroy())
+        menubar.add_cascade(label="Experimentation",menu=self.filemenu)
+        
+        '''HELP MENU'''
+        self.helpmenu.add_command(label="About Us", command=aboutUs)
+        self.helpmenu.add_command(label="User's Manual")
+        menubar.add_cascade(label="Help",menu=self.helpmenu)
+        '''Menu Bar'''
+        
+        '''Setting the Tabbed Pane'''
+        tabbedPane.add(t1, text="Project")
+        tabbedPane.add(self.t2, text="Results")
+        tabbedPane.grid(row=0, column=0, sticky=(N,W,S,E))
+        '''Setting the Tabbed Pane'''
+        
+        '''Widgets'''
+        '''File Text Box'''
+        txtWidth = screensize[0]*.5
+        txtHeight = screensize[1]*.5
+        txtPosX = screensize[0]*.36
+        txtPosY = screensize[1]*.06
+        self.text = Text(t1,state='disabled',bg='gray',yscrollcommand=lambda f, l: ScreenManipulation.autoscroll(vsb1, f, l))
+        self.text.place(width=txtWidth,height=txtHeight,x = txtPosX, y = txtPosY)
+        self.text.tag_configure("error", foreground="red", underline=True)
+        vsb1 = Scrollbar(t1,orient="vertical")   
+        vsb1['command'] = self.text.yview
+        vsb1Width = screensize[0]*.010
+        vsb1Height = screensize[1]*.5
+        vsb1PosX = screensize[0]*.86
+        vsb1PosY = screensize[1]*.061
+        vsb1.place(width=vsb1Width,height=vsb1Height,x = vsb1PosX, y = vsb1PosY)
+        
+        '''line numbering'''
+        txtWidth = screensize[0]*.0225
+        txtHeight = screensize[1]*.5
+        txtPosX = screensize[0]*.34
+        txtPosY = screensize[1]*.06
+        self.lineNumbering = Text(t1,state='disabled',bg='gray',yscrollcommand=lambda f, l: ScreenManipulation.autoscroll(vsb1, f, l))
+        self.lineNumbering.place(width=txtWidth,height=txtHeight,x = txtPosX, y = txtPosY)
+        vsb1['command'] = self.lineNumbering.yview
+            
+        '''File List Box'''
+        fileWidth = screensize[0]*.30
+        fileHeight = screensize[1]*.5
+        filePosX = screensize[0]*.025
+        filePosY = screensize[1]*.06
+
+        self.tree.heading("#0", text="Directory Structure", anchor='w')
+        self.tree.column("#0", stretch=0, width=500)
+
+        populate_roots(self.tree,self.path)
+        vsb = Scrollbar(t1,orient="vertical")   
+        vsb['command'] = self.tree.yview
+        vsbWidth = screensize[0]*.010
+        vsbHeight = screensize[1]*.5
+        vsbPosX = screensize[0]*.325
+        vsbPosY = screensize[1]*.061
+        vsb.place(width=vsbWidth,height=vsbHeight,x = vsbPosX, y = vsbPosY)    
+        self.tree.place(width=fileWidth,height=fileHeight,x = filePosX, y = filePosY)
+        
+        fileLX = screensize[0]*.025
+        fileLY = screensize[1]*.025        
+        fileLabel = Label(t1,text = "Files:")
+        fileLabel.place(x = fileLX,y = fileLY)
+        '''File List Box'''
+        
+        '''Error Table w/ Label'''
+        errLX = screensize[0]*.35
+        errLY = screensize[1]*.57        
+        self.errLabel = Label(t1,text = "Error:")
+        self.errLabel.place(x = errLX,y = errLY)
+        
+        errListWidth = screensize[0]*.6
+        errListHeight = screensize[1]*.27
+        errListPosX = screensize[0]*.35
+        errListPosY = screensize[1]*.60  
+        
+        self.var = tktable.ArrayVar(t1)
+        self.var["%i,%i" % (0,0)]='Line'
+        self.var["%i,%i" % (0,1)]='Column'
+        self.var["%i,%i" % (0,2)]='Description'
+          
+        self.ErrorsTable = tktable.Table(t1,rows=9,cols=3,state='disabled',titlerows=1,selectmode='browse',
+        selecttype='row',colstretch='last',resizeborders='none',flashmode='on',bg='white', variable=self.var,
+        yscrollcommand = lambda x,v: ScreenManipulation.autoscroll(vsb2, x, v)) 
+        vsb2 = ttk.Scrollbar(t1,orient="vertical")  
+        self.ErrorsTable.tag_configure('flash', background='')  
+        vsb2['command'] = self.ErrorsTable.yview
+        vsb2Width = screensize[0]*.010  
+        vsb2Height = screensize[1]*.27
+        vsb2PosX = screensize[0]*.945
+        vsb2PosY = screensize[1]*.60
+        vsb2.place(width=vsb2Width,height=vsb2Height,x = vsb2PosX, y = vsb2PosY) 
+        self.ErrorsTable.place(width=errListWidth,height=errListHeight,x = errListPosX, y = errListPosY)
+        '''Error Table w/ Label'''   
+        
+        '''Results Table'''
+        self.varRes = tktable.ArrayVar(self.t2)
+        self.varRes["%i,%i" % (0,0)]='FileName'
+        self.varRes["%i,%i" % (0,1)]='Errors Seeded'
+        self.varRes["%i,%i" % (0,2)]='Errors Detected'
+        self.varRes["%i,%i" % (0,3)]='Previous Errors Detected'
+        self.varRes["%i,%i" % (0,4)]='Effectiveness'
+        self.varRes["%i,%i" % (0,5)]='Count'       
+
+        self.resTb = tktable.Table(self.t2,rows=30,cols=6,state='disabled',titlerows=1,colwidth=05,selectmode='browse',
+                selecttype='row',
+                colstretch='all',
+                variable=self.varRes,
+                resizeborders='none',bg = 'white',yscrollcommand = lambda x,v: ScreenManipulation.autoscroll(vsb5, x, v))
+        
+        resWidth=self.screensize[0]*.9
+        resHeight=self.screensize[1]*.85
+        resPosX=(self.screensize[0]*.5)-(self.screensize[0]*.45)
+        resPosY=(self.screensize[1]*.5)-(self.screensize[1]*.425)
+        self.resTb.place(width=resWidth,height=resHeight,x = resPosX, y = resPosY)
+        
+        vsb5 = Scrollbar(self.t2,orient="vertical")   
+        vsb5['command'] = self.resTb.yview
+        vsb5Width = screensize[0]*.010
+        vsb5Height = screensize[1]*.85
+        vsb5PosX = (self.screensize[0]*.5)+(self.screensize[0]*.45)
+        vsb5PosY = (self.screensize[1]*.5)-(self.screensize[1]*.425)
+        vsb5.place(width=vsb5Width,height=vsb5Height,x = vsb5PosX, y = vsb5PosY)
+        '''Results Table'''
+        
+        '''Suggestion Box'''
+        sugLX = screensize[0]*.025
+        sugLY = screensize[1]*.57        
+        self.sugLabel = Label(t1,text = "Suggestion:")
+        self.sugLabel.place(x = sugLX,y = sugLY)
+        exactLX = screensize[0]*.025
+        exactLY = screensize[1]*.87        
+        self.exacMatchLabel = Label(t1,text = "Exact Match: None")
+        self.exacMatchLabel.place(x = exactLX,y = exactLY)
+        sugWidth = screensize[0]*.31
+        sugHeight = screensize[1]*.27
+        sugPosX = screensize[0]*.025
+        sugPosY = screensize[1]*.60
+        
+        self.var2 = tktable.ArrayVar(t1)
+        self.var2["%i,%i" % (0,0)]='Tag'
+        self.var2["%i,%i" % (0,1)]='Value'
+
+        suggestion = tktable.Table(t1,rows=10,cols=2,state='disabled',titlerows=1,colwidth=30,selectmode='browse',
+                selecttype='row',
+                colstretch='last',
+                variable=self.var2,
+                resizeborders='none',bg = 'white', yscrollcommand = lambda x,v: ScreenManipulation.autoscroll(vsb3, x, v))
+        vsb3 = ttk.Scrollbar(t1,orient="vertical")   
+        vsb3['command'] = suggestion.yview
+        vsb3Width = screensize[0]*.010      
+        vsb3Height = screensize[1]*.27
+        vsb3PosX = screensize[0]*.325
+        vsb3PosY = screensize[1]*.60
+        vsb3.place(width=vsb3Width,height=vsb3Height,x = vsb3PosX, y = vsb3PosY) 
+
+        suggestion.place(width=sugWidth,height=sugHeight,x = sugPosX, y = sugPosY) 
+        '''Suggestion Box'''    
+        
+        '''Button'''
+        brws = Button(t1, text = 'Browser', command=self.toBrowser)
+        bWidth = screensize[0]*.1      
+        bHeight = screensize[1]*.05
+        bPosX = screensize[0]*.875
+        bPosY = screensize[1]*.1
+        brws.place(width=bWidth,height=bHeight,x = bPosX, y = bPosY)
+        
+        Save = Button(t1, text = 'Save', command=self.toSave)
+        SWidth = screensize[0]*.1      
+        SHeight = screensize[1]*.05
+        SPosX = screensize[0]*.875
+        SPosY = screensize[1]*.15
+        Save.place(width=SWidth,height=SHeight,x = SPosX, y = SPosY)
+        
+        perfCorr = Button(t1, text = 'Edit', command=self.enableText)
+        SWidth = screensize[0]*.1      
+        SHeight = screensize[1]*.05
+        SPosX = screensize[0]*.875
+        SPosY = screensize[1]*.20
+        perfCorr.place(width=SWidth,height=SHeight,x = SPosX, y = SPosY) 
+        
+        Val = Button(t1, text = 'Validate',command = self.validateFile)
+        VWidth = screensize[0]*.1      
+        VHeight = screensize[1]*.05
+        VPosX = screensize[0]*.875
+        VPosY = screensize[1]*.25
+        Val.place(width=VWidth,height=VHeight,x = VPosX, y = VPosY) 
+          
+        suggest = Button(t1, text = 'View Suggestion', command=self.clickSuggestion)
+        SWidth = screensize[0]*.1      
+        SHeight = screensize[1]*.05
+        SPosX = screensize[0]*.35
+        SPosY = screensize[1]*.875
+        suggest.place(width=SWidth,height=SHeight,x = SPosX, y = SPosY) 
+        '''Button'''
+        
+        self.LLine = Label(t1, text = 'Line: \n')
+        LLWidth = screensize[0]*.1      
+        LLHeight = screensize[1]*.05
+        LLPosX = screensize[0]*.875
+        LLPosY = screensize[1]*.4
+        self.LLine.place(width=LLWidth,height=LLHeight,x = LLPosX, y = LLPosY) 
+        
+        self.LColumn = Label(t1, text = 'Column: \n')
+        LCWidth = screensize[0]*.1     
+        LCHeight = screensize[1]*.05
+        LCPosX = screensize[0]*.875
+        LCPosY = screensize[1]*.45
+        self.LColumn.place(width=LCWidth,height=LCHeight,x = LCPosX, y = LCPosY) 
+     
+        '''Status Bar'''
+        errDetWidth = screensize[0]*.25
+        errDetHeight = screensize[1]*.03
+        errDetPosX = screensize[0]*.0
+        errDetPosY = screensize[1]*.93
+        self.errDetected = Label(t1, text="Errors Seeded: N/A", relief=SUNKEN)
+        self.errDetected.place(width=errDetWidth,height=errDetHeight,x = errDetPosX, y = errDetPosY)
+        
+        totErrWidth = screensize[0]*.25
+        totErrHeight = screensize[1]*.03
+        totErrPosX = screensize[0]*.25
+        totErrPosY = screensize[1]*.93
+        self.totErrDetected = Label(t1, text="Total Errors Detected: N/A", relief=SUNKEN)
+        self.totErrDetected.place(width=totErrWidth,height=totErrHeight,x = totErrPosX, y = totErrPosY)
+        
+        effWidth = screensize[0]*.25
+        effHeight = screensize[1]*.03
+        effPosX = screensize[0]*.50
+        effPosY = screensize[1]*.93
+        self.effectiveness = Label(t1, text="Effectiveness: N/A", relief=SUNKEN)
+        self.effectiveness.place(width=effWidth,height=effHeight,x = effPosX, y = effPosY)
+        
+        ptotErrWidth = screensize[0]*.25
+        ptotErrHeight = screensize[1]*.03
+        ptotErrPosX = screensize[0]*.75
+        ptotErrPosY = screensize[1]*.93
+        self.ptotErrDetected = Label(t1, text="Previous Errors Detected: N/A", relief=SUNKEN)
+        self.ptotErrDetected.place(width=ptotErrWidth,height=ptotErrHeight,x = ptotErrPosX, y = ptotErrPosY)
+        '''Status Bar'''   
+
+        self.tree.bind('<<TreeviewOpen>>', update_tree)
+        self.tree.bind('<<TreeviewSelect>>', self.readAndCreateRecord)
+        tabbedPane.bind ('<<NotebookTabChanged>>',self.results)
+        
+        self.text.bind('<Button-1>', self.key)
+        #self.text.bind('<Key>', self.key)
+    
+    def key(self, event):
+        val = self.text.index(Tkinter.INSERT).split('.')
+        self.LLine.config(text='Line: ' + str(val[0]))
+        self.LColumn.config(text='Column: ' + str(val[1]))
+                
+    def enableText(self):
+        try:
+            if not os.path.isdir(self.FileLocation):
+                self.text.configure(state='normal', bg='white')
+        except AttributeError:
+            pass
+    
+def aboutUs():
+    rootBox = Tk()
+    rootBox.title('About Us')
+    rootBox.configure(bg='white')
+    
+    #logoImage = PhotoImage(file='about.gif', master=rootBox)
+    #logoImage.configure(width=100, height=100)
+    
+    #logo = Label(rootBox, text='logo')#image=logoImage)
+    #logo.configure(bg='white')
+    #logo.grid(row=0, column=0, rowspan=3, sticky=W+E+N+S, padx=5, pady=5)
+    
+    title = Label(rootBox, text='Error Seeding Method for HTML Code Syntax Analysis\nv1.0a', justify=LEFT)
+    title.grid(row=0, column=1, sticky=W, padx=5, pady = 5)
+    
+    copy_right = Label(rootBox, text='(c) Copyright Team Q-gal and others 2000, 2012.\nAll rights reserved', justify=LEFT)
+    copy_right.grid(row=1, column=1, sticky=W, padx=5, pady = 5)
+    
+    website= Label(rootBox, text='Visit at http://www.team1-gal.com')
+    website.grid(row=2, column=1, sticky=W, padx=5, pady = 5)
+
+
+        
+'''Calling the Window Component'''
+app = Application()               
+app.title("Error Seeding Method")
+
+with Splash( app, 'splash_logo.gif', 3.0 ):
+    app.mainloop() 
+'''Calling the Window Component and Splash Screen'''

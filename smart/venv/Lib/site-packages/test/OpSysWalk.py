@@ -1,0 +1,24 @@
+'''
+Created on Jan 17, 2013
+
+@author: VPCYB15AG
+'''
+from Tkinter import *
+import Tkinter
+import tkFileDialog
+import os
+
+
+
+path = '/home/user/TestSet'
+
+
+for(path,dirs,files) in os.walk(path):
+    print os.path.basename(path)
+    print path
+    print dirs
+    print files
+    print "---"
+
+    
+    
